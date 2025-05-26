@@ -14,7 +14,10 @@ import { getOneFunction } from './controllers/senoirDeveloperControler.js';
 import { getNewFunction } from './controllers/senoirDeveloperControler.js';
 import { getAllUpdate } from './controllers/senoirDeveloperControler.js';
 import cors from 'cors';
+import { getAllTasksForProgrammerById } from './controllers/senoirDeveloperControler.js';
+import { getEmployeeById } from './controllers/userControlers.js';
 import { getAllTasksForSenior, getAllTasksForProgrammer } from './controllers/senoirDeveloperControler.js';
+import Task from './models/Task.js';
 
 const app = express()
 app.use(express.json());
@@ -30,6 +33,39 @@ app.post( '/test',(req,res)=>{
         "dataUser":dataUser
     })
 })
+
+
+
+app.get('/employee/:id', async (req, res) => {
+  try {
+    const employee = await getEmployeeById(req.params.id);
+    if (!employee) {
+      return res.status(404).json({ message: 'Сотрудник не найден' });
+    }
+    res.json(employee);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Ошибка сервера' });
+  }
+});
+
+
+app.get('/tasks', async (req, res) => {
+  try {
+    const tasks = await Task.find().populate('responsible') // разворачиваем данные ответственного
+      .populate('executor')    // разворачиваем исполнителя
+      .populate('aplication'); // разворачиваем заявку;
+    if (!tasks || tasks.length === 0) {
+      return res.status(404).json({ message: 'Задачи не найдены' });
+    }
+    res.json(tasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Ошибка сервера' });
+  }
+});
+
+
 //-------------------------------------отдел кадров----------------------------------------------------------------------
 //Добавить отдел
 app.post('/personnel/add/departament', addDepartament)
@@ -99,6 +135,9 @@ app.post('/senior/developer/all/task', checkAuthorization, getAllTasksForSenior)
 
 // Получить все задачи для программиста
 app.get('/senior/programmer/all/task', checkAuthorization, getAllTasksForProgrammer)
+
+// Получить все задачи для программиста
+app.get('/senior/programmer/all/task/:id', checkAuthorization, getAllTasksForProgrammerById)
 
 // Удалить задачу заявки
 app.delete('/senior/developer/task/:idTask',checkAuthorization,deleteTask)

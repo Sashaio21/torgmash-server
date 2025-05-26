@@ -4,9 +4,9 @@ const taskSchema = new Schema({
     titleTask: String,
     descriptionTask: String,
     statusTask: String,
-    executor: Schema.Types.ObjectId, // тот кто выполняет задачу 
-    responsible: Schema.Types.ObjectId, // ответственный за выполнение заявки
-    aplication: Schema.Types.ObjectId, // заявка, к которой относиться задача
+    executor: { type: Schema.Types.ObjectId, ref: 'Employee' },
+    responsible: { type: Schema.Types.ObjectId, ref: 'Employee' },
+    aplication: { type: Schema.Types.ObjectId, ref: 'Application' },
     deadline: Date,
     createdAt: Date,
     updatedAt: Date,

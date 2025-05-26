@@ -1,5 +1,4 @@
 import bcrypt from 'bcryptjs';
-
 import Employee from '../models/Employee.js';
 import SeniorDeveloper from '../models/SeniorDeveloper.js';
 import Programmer from '../models/Programmer.js';
@@ -106,6 +105,26 @@ export const authorization = async (req, res) => {
         })
     }
 }
+
+export async function getEmployeeById(id) {
+  try {
+    // Находим сотрудника по Id, подгружаем должность (jobTitle) и отдел (department), если нужно
+    const employee = await Employee.findById(id)
+      .populate('jobTitle')      // подгрузить данные должности
+      .populate('department')    // подгрузить данные отдела (если у тебя есть модель для отдела)
+      .exec();
+
+    if (!employee) {
+      return null;  // или кидай ошибку, если не найден
+    }
+
+    return employee;
+  } catch (error) {
+    console.error('Ошибка при получении сотрудника по Id:', error);
+    throw error;
+  }
+}
+
 
 export const getDataEmployee = async (req, res) => {
     try {

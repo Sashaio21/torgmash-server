@@ -8,7 +8,10 @@ const employeeShema = new Schema({
     password: String,
     name: String,
     dob: Date,
-    department: Schema.Types.ObjectId,
+    department: {
+        type: Schema.Types.ObjectId,
+        ref: "Department"   // <-- Добавь сюда имя модели отдела
+    },
     contacts: Number,
     jobTitle: {
         type: Schema.Types.ObjectId,

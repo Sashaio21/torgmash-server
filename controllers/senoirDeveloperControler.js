@@ -198,6 +198,32 @@ export const getAllTasksForProgrammer = async (req, res) => {
 
 
 
+export const getAllTasksForProgrammerById = async (req, res) => {
+    try {
+
+
+        // const programmer = await Programmer.findById(req.params.id)
+        // console.log(programmer.idEmployee)
+        const allTasks = await Task.find({
+            "executor" : req.params.id
+        })
+
+        console.log(allTasks)
+
+        return res.status(200).json({
+            "message" : "success",
+            "allTasks" : allTasks
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(404).json({
+            "error": error.errmsg,
+            "message": "Ошибка удаления задачи"
+        })
+    }
+}
+
+
 
 export const addUpdate = async (req,res) => {
     try {
